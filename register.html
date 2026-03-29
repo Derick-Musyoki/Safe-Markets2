@@ -1,22 +1,127 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"> 
-  <title>Safe Markets - Register</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="app.css">
+<meta charset="UTF-8">
+<title>Safe Markets - Auth</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background-color: #0f172a;
+}
+
+/* Containers */
+.container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 120px;
+}
+
+.card {
+  background: white;
+  width: 420px;
+  padding: 20px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+/* Inputs */
+input, button {
+  width: 80%;
+  padding: 10px;
+  margin: 8px 0;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+button {
+  background: #2c5364;
+  color: white;
+  cursor: pointer;
+  border: none;
+}
+
+button:hover {
+  background: #1a3a44;
+}
+
+/* Role */
+.role-select {
+  text-align: left;
+  width: 80%;
+  margin: 10px auto;
+}
+
+.role-option {
+  display: inline-block;
+  margin-right: 15px;
+}
+
+/* Terms */
+.terms {
+  display: flex;
+  justify-content: center;
+  gap: 5px;
+  font-size: 14px;
+}
+
+/* Switch */
+.switch-text {
+  margin-top: 15px;
+  font-size: 14px;
+}
+
+.switch-text a {
+  color: #2c5364;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Animation */
+.swipe-in {
+  animation: slideIn 0.4s ease;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(30px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+/* Hide */
+.hidden {
+  display: none;
+}
+</style>
 </head>
+
 <body>
 
-<div class="register-container">
-  <div class="register-card swipe-in">
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="loginCard" class="card swipe-in">
+    <h2>SafeMarkets Login</h2>
+    <input type="email" id="loginEmail" placeholder="Email">
+    <input type="password" id="loginPassword" placeholder="Password">
+    <button id="loginBtn">Login</button>
+
+    <p class="switch-text">
+      Don't have an account? 
+      <a onclick="showRegister()">Create account</a>
+    </p>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="registerCard" class="card hidden swipe-in">
     <h2>Create Account</h2>
-    
+
     <input type="email" id="regEmail" placeholder="Email">
     <input type="password" id="regPassword" placeholder="Password">
     <input type="password" id="confirmPassword" placeholder="Confirm Password">
-    
+
     <div class="role-select">
       <p>Sign up as:</p>
       <label class="role-option">
@@ -26,20 +131,124 @@
         <input type="radio" name="role" value="seller"> Seller
       </label>
     </div>
-    
+
     <label class="terms">
-      <input type="checkbox" id="termsCheck"> I agree to Terms & Conditions
+      <input type="checkbox" id="termsCheck"> I agree to Terms
     </label>
-    
+
     <button id="registerBtn">Register</button>
-    
+
     <p class="switch-text">
       Already have an account? 
-      <a href="login.html">Login here</a>
+      <a onclick="showLogin()">Login</a>
     </p>
   </div>
+
 </div>
 
-<script src="script.js" defer></script>
+<script>
+console.log("APP LOADED");
+
+// SWITCH VIEWS
+function showRegister() {
+  document.getElementById("loginCard").classList.add("hidden");
+  document.getElementById("registerCard").classList.remove("hidden");
+}
+
+function showLogin() {
+  document.getElementById("registerCard").classList.add("hidden");
+  document.getElementById("loginCard").classList.remove("hidden");
+}
+
+// STORAGE
+function getUsers() {
+  return JSON.parse(localStorage.getItem("users")) || [];
+}
+
+function saveUsers(users) {
+  localStorage.setItem("users", JSON.stringify(users));
+}
+
+// CREATE ADMIN
+let users = getUsers();
+if (!users.some(u => u.email === "admin@safemarket.com")) {
+  users.push({
+    email: "admin@safemarket.com",
+    password: "Nexus01",
+    roles: ["admin"],
+    trustScore: 100,
+    status: "approved"
+  });
+  saveUsers(users);
+}
+
+// LOGIN
+document.getElementById("loginBtn").onclick = function () {
+  const email = document.getElementById("loginEmail").value.trim().toLowerCase();
+  const password = document.getElementById("loginPassword").value.trim();
+
+  const user = getUsers().find(u => u.email === email && u.password === password);
+
+  if (user) {
+    localStorage.setItem("activeUser", JSON.stringify(user));
+    alert("Login successful!");
+
+    if (user.roles.includes("admin")) {
+      window.location.href = "admin.html";
+    } else if (user.roles.includes("buyer")) {
+      window.location.href = "marketplace.html";
+    } else {
+      window.location.href = "dashboard.html";
+    }
+  } else {
+    alert("Wrong email or password!");
+  }
+};
+
+// REGISTER
+document.getElementById("registerBtn").onclick = function () {
+  const email = document.getElementById("regEmail").value.trim().toLowerCase();
+  const password = document.getElementById("regPassword").value.trim();
+  const confirm = document.getElementById("confirmPassword").value.trim();
+  const terms = document.getElementById("termsCheck").checked;
+  const role = document.querySelector('input[name="role"]:checked').value;
+
+  if (!email || !password || !confirm) {
+    alert("Fill all fields!");
+    return;
+  }
+
+  if (!terms) {
+    alert("Accept terms!");
+    return;
+  }
+
+  if (password !== confirm) {
+    alert("Passwords do not match!");
+    return;
+  }
+
+  let users = getUsers();
+
+  if (users.some(u => u.email === email)) {
+    alert("Email already exists!");
+    return;
+  }
+
+  users.push({
+    email: email,
+    password: password,
+    roles: [role],
+    trustScore: 50,
+    status: "none"
+  });
+
+  saveUsers(users);
+
+  alert("Account created!");
+  showLogin();
+};
+</script>
+
 </body>
 </html>
