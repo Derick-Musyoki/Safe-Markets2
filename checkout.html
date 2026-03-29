@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeMarkets - Checkout</title>
+<style>
+body { font-family: Arial, sans-serif; padding:20px; background: white; }
+h2 { text-align:center; margin-bottom:20px; }
+.cart-item { display:flex; justify-content:space-between; margin:10px 0; padding:10px; background:#fff; border-radius:6px; }
+button { padding:10px 16px; border:none; border-radius:6px; background:green; color:white; cursor:pointer; margin-top:10px; width:100%; font-weight:bold; }
+select, input { padding:8px; border-radius:6px; margin:10px 0; width:100%; box-sizing:border-box; }
+label { font-weight:bold; display:block; margin-top:12px; }
+</style>
+</head>
+<body>
+
+<h2>Checkout</h2>
+
+<div id="cartContainer"></div>
+
+<label for="paymentSelect">Choose Payment Method:</label>
+<select id="paymentSelect">
+    <option value="">Select method</option>
+    <option value="M-Pesa">M-Pesa</option>
+    <option value="Card">Credit/Debit Card</option>
+    <option value="Cash on Delivery">Cash on Delivery</option>
+</select>
+
+<div id="mpesaPhoneContainer" style="display:none;">
+    <label for="mpesaPhone">Enter M-Pesa Phone Number:</label>
+    <input type="tel" id="mpesaPhone" placeholder="e.g., 07XXXXXXXX" pattern="[0-9]{10}">
+</div>
+
+<button id="checkoutBtn">Confirm Purchase</button>
+
+<script>
+// Load active user
+let user = JSON.parse(localStorage.getItem("activeUser"));
+if(!user){
+    alert("Login first!");
+    window.location.href = "login.html";
+}
+
+// Load cart from previous page
+let cart = JSON.parse(localStorage.getItem("checkoutCart")) || [];
+const cartContainer = document.getElementById("cartContainer");
+
+function renderCart(){
+    if(cart.length === 0){
+        cartContainer.innerHTML = "<p>Your cart is empty!</p>";
+        return;
+    }
+
+    cartContainer.innerHTML = "";
+    cart.forEach(p => {
+        const div = document.createElement("div");
+        div.className = "cart-item";
+        div.innerHTML = `
+            <span><strong>${p.name}</strong><br>Price: KES ${p.price.toLocaleString()}</span>
+        `;
+        cartContainer.appendChild(div);
+    });
+}
+
+renderCart();
+
+// Show/hide phone input if M-Pesa selected
+const paymentSelect = document.getElementById("paymentSelect");
+const mpesaPhoneContainer = document.getElementById("mpesaPhoneContainer");
+
+paymentSelect.addEventListener("change", function(){
+    if(paymentSelect.value === "M-Pesa"){
+        mpesaPhoneContainer.style.display = "block";
+    } else {
+        mpesaPhoneContainer.style.display = "none";
+    }
+});
+
+// Handle checkout
+document.getElementById("checkoutBtn").addEventListener("click", function(){
+    const selectedPayment = paymentSelect.value;
+    const mpesaPhone = document.getElementById("mpesaPhone").value.trim();
+
+    if(cart.length === 0){
+        alert("Your cart is empty!");
+        return;
+    }
+    if(!selectedPayment){
+        alert("Select a payment method!");
+        return;
+    }
+    if(selectedPayment === "M-Pesa" && (!mpesaPhone || !/^\d{10}$/.test(mpesaPhone))){
+        alert("Enter a valid 10-digit M-Pesa phone number!");
+        return;
+    }
+
+    // Update main products list
+    let allProducts = JSON.parse(localStorage.getItem("products")) || [];
+    cart.forEach(p => {
+        let prod = allProducts.find(prod => prod.id === p.id);
+        if(prod){
+            prod.sold = true;
+            prod.paymentMethod = selectedPayment;
+            if(selectedPayment === "M-Pesa") prod.mpesaPhone = mpesaPhone;
+        }
+    });
+    localStorage.setItem("products", JSON.stringify(allProducts));
+
+    alert(`Purchase successful!\nTotal: KES ${cart.reduce((s,i)=>s+i.price,0).toLocaleString()}\nPayment method: ${selectedPayment}${selectedPayment==="M-Pesa" ? `\nPhone: ${mpesaPhone}` : ""}`);
+    
+    // After marking products as sold in checkout.js
+cart.forEach(p => {
+    let prod = allProducts.find(prod => prod.id === p.id);
+    if(prod){
+        prod.sold = true;
+        prod.paymentMethod = selectedPayment;
+        // ✅ Update seller trust
+        updateTrustScore(prod.seller);
+    }
+});
+
+    // Clear checkout
+    cart = [];
+    localStorage.removeItem("checkoutCart");
+    renderCart();
+    window.location.href = "marketplace.html"; // back to marketplace
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,595 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SafeMarket Marketplace</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, 'Inter', -apple-system, sans-serif;
+    }
+
+    :root {
+      --bg: #0f172a;
+      --surface: #111827;
+      --surface2: #1f2937;
+      --border: #2d3748;
+      --text: #e5e7eb;
+      --text2: #9ca3af;
+      --accent: #00e5a0;
+      --trust-high: #10b981;
+      --trust-mid: #f59e0b;
+      --trust-low: #ef4444;
+      --radius: 14px;
+      --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
+    }
+
+    body { background: var(--bg); color: var(--text); }
+
+    .container { max-width: 1400px; margin: 0 auto; padding: 20px 24px; }
+
+  
+    .nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(8px);
+    }
+    .nav-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 24px;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1.5rem;
+      text-decoration: none;
+      background: linear-gradient(135deg, #fff, var(--accent));
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+    .trust-badge-nav {
+      background: var(--surface2);
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+   body {
+	user-select:none;
+}
+    .header h1 { font-size: 2rem; margin-bottom: 6px; }
+    .header p { color: var(--text2); border-left: 3px solid var(--accent); padding-left: 12px; }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin: 28px 0 24px;
+      padding: 16px 18px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+    }
+    input, select {
+      padding: 10px 16px;
+      border-radius: 40px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text);
+      outline: none;
+    }
+    input:focus, select:focus { border-color: var(--accent); }
+
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
+    }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: 0.25s;
+      cursor: pointer;
+    }
+    .card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: var(--shadow); }
+    .card-img {
+      height: 180px;
+      background-size: cover;
+      background-position: center;
+      background-color: var(--surface2);
+      position: relative;
+    }
+    .trust-score-chip {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(4px);
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: bold;
+    }
+    .card-body { padding: 16px; }
+    .title { font-weight: 700; font-size: 1.1rem; }
+    .price { color: var(--accent); font-weight: 800; font-size: 1.2rem; margin: 6px 0; }
+    .seller { font-size: 0.75rem; color: var(--text2); margin: 4px 0; }
+    .actions { display: flex; gap: 8px; margin-top: 12px; }
+    button {
+      padding: 8px 14px;
+      border: none;
+      border-radius: 40px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+    .primary { background: var(--accent); color: #000; }
+    .secondary { background: var(--surface2); color: var(--text); }
+
+
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(5px);
+      z-index: 200;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+      opacity: 0;
+      transition: 0.2s;
+    }
+    .modal-overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+    .modal {
+      background: var(--surface);
+      border-radius: 24px;
+      max-width: 1100px;
+      width: 90%;
+      max-height: 85vh;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      padding: 24px;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: var(--surface2);
+      font-size: 1.2rem;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .product-detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 28px;
+      margin-top: 20px;
+    }
+    .detail-img {
+      width: 100%;
+      height: 260px;
+      background-size: cover;
+      background-position: center;
+      border-radius: 20px;
+      background-color: var(--surface2);
+    }
+    .trust-score-big {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 40px;
+      font-weight: bold;
+      margin: 12px 0;
+    }
+    .reviews-section, .chat-section {
+      margin-top: 24px;
+      border-top: 1px solid var(--border);
+      padding-top: 20px;
+    }
+    .review-item {
+      background: var(--surface2);
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .review-user { font-weight: bold; color: var(--accent); }
+    .review-text { margin: 6px 0; font-size: 0.9rem; }
+    .review-verified { font-size: 0.7rem; color: var(--trust-high); }
+    .chat-messages {
+      background: var(--surface2);
+      border-radius: 16px;
+      height: 200px;
+      overflow-y: auto;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .chat-input-area {
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input-area input {
+      flex: 1;
+    }
+    .message { margin-bottom: 10px; padding: 6px 10px; border-radius: 12px; max-width: 80%; }
+    .message.buyer { background: var(--accent); color: #000; margin-left: auto; text-align: right; }
+    .message.seller { background: var(--surface); border: 1px solid var(--border); }
+
+ 
+    .cart-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: var(--accent);
+      padding: 14px 22px;
+      border-radius: 60px;
+      font-weight: 800;
+      z-index: 150;
+      border: none;
+      cursor: pointer;
+    }
+    .cart-panel {
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 360px;
+      height: 100%;
+      background: var(--surface);
+      border-left: 1px solid var(--border);
+      transform: translateX(100%);
+      transition: 0.3s;
+      z-index: 300;
+      display: flex;
+      flex-direction: column;
+    }
+    .cart-panel.open { transform: translateX(0); }
+    .cart-header, .cart-footer { padding: 16px; border-bottom: 1px solid var(--border); }
+    .cart-body { flex: 1; overflow: auto; padding: 12px; }
+    .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--border); align-items: center; }
+    @media (max-width: 700px) {
+      .product-detail-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">️ Safe-Markets</a>
+    <div class="trust-badge-nav"> Verified Trust Score System</div>
+  </div>
+</nav>
+
+<div class="container">
+  <div class="header">
+    <h1>Verified Marketplace</h1>
+    <p>Every seller verified • Admin approved reviews • Real trust scores</p>
+  </div>
+  <div class="toolbar">
+    <input type="search" id="search" placeholder="Search products..." />
+    <select id="category"></select>
+    <select id="sort">
+      <option value="new">Newest</option>
+      <option value="low">Price Low</option>
+      <option value="high">Price High</option>
+      <option value="trust">Highest Trust</option>
+    </select>
+  </div>
+  <div class="grid" id="grid"></div>
+</div>
+
+<button class="cart-btn" id="cartBtn"> Cart (<span id="cartCount">0</span>)</button>
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">Your Cart <button id="closeCartBtn" style="float:right; background:none; color:var(--text); font-size:1.2rem;">✕</button></div>
+  <div class="cart-body" id="cartBody"></div>
+  <div class="cart-footer"><strong id="total">Total: KES 0</strong><button id="checkoutBtn" style="width:100%; margin-top:12px; background:var(--accent); color:#000;">Buy Now</button></div>
+</div>
+
+<!-- Modal: Product detail + chat + reviews -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-close" id="modalClose">✕</div>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+
+// 🔹 Demo products (DO NOT TOUCH)
+const demoProducts = [
+  { id: 1, name: "HP Laptop", price: 50000, category: "Electronics", img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=400", desc: "Core i5, 8GB RAM, 256GB SSD. Ideal for work and school.", seller: "TechHub Kenya", sellerRating: 4.8, trustScore: 94 },
+  { id: 2, name: "Sony Headphones", price: 4500, category: "Electronics", img: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400", desc: "Noise cancelling, deep bass, 30hr battery life.", seller: "SoundPro", sellerRating: 4.7, trustScore: 92 },
+  { id: 3, name: "Samsung Buds2 Pro", price: 12500, category: "Electronics", img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400", desc: "Active noise cancellation, 360 audio, wireless charging case.", seller: "Samsung Store KE", sellerRating: 4.8, trustScore: 93 },
+  { id: 4, name: "Samsung Galaxy Watch", price: 12500, category: "Electronics", img: "https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=400", desc: "Fitness tracker, heart rate monitor, GPS, sleep tracking.", seller: "WearableKE", sellerRating: 4.5, trustScore: 88 },
+  { id: 5, name: "Gaming Mouse", price: 3200, category: "Electronics", img: "https://images.unsplash.com/photo-1615663245857-ac93bb7c39e7?w=400", desc: "RGB, high precision, 16000 DPI, programmable buttons.", seller: "GameTech", sellerRating: 4.6, trustScore: 89 },
+  { id: 6, name: "Mechanical Keyboard", price: 5800, category: "Electronics", img: "https://images.unsplash.com/photo-1587829741301-dc798b83add3?w=400", desc: "Blue switches, RGB backlit, durable aluminum frame.", seller: "PeripheralHub", sellerRating: 4.7, trustScore: 91 },
+  { id: 7, name: "4K Action Camera", price: 75000, category: "Electronics", img: "https://images.unsplash.com/photo-1502920917128-1aa500764cbd?w=400", desc: "Waterproof, ultra-wide lens, image stabilization.", seller: "CamGear KE", sellerRating: 4.4, trustScore: 86 },
+  { id: 8, name: "Wireless Earbuds", price: 4500, category: "Electronics", img: "https://images.unsplash.com/photo-1590658268037-6bf12165a8df?w=400", desc: "Bluetooth 5.3, 24hr playtime, IPX4 waterproof.", seller: "AudioZone", sellerRating: 4.5, trustScore: 87 },
+  { id: 9, name: "Mini Drone", price: 48500, category: "Electronics", img: "https://images.unsplash.com/photo-1579829366248-204fe8413f31?w=400", desc: "4K camera, foldable, 30min flight time, GPS stabilization.", seller: "DroneHub KE", sellerRating: 4.7, trustScore: 91 },
+  { id: 10, name: "JBL Speaker", price: 6500, category: "Electronics", img: "https://images.unsplash.com/photo-1589003077984-894e133dabab?w=400", desc: "Voice control, premium sound, smart home integration.", seller: "AudioTech", sellerRating: 4.7, trustScore: 90 }
+];
+
+// 🔹 Load REAL products from localStorage
+let storedProducts = JSON.parse(localStorage.getItem("products")) || [];
+
+// 🔹 Convert them to match marketplace format
+let formattedStoredProducts = storedProducts.map(p => ({
+    id: p.id,
+    name: p.name,
+    price: p.price,
+    category: p.category || "others",
+    img: p.image || "https://via.placeholder.com/300x200?text=No+Image",
+    desc: p.description || "No description",
+    seller: p.seller,
+    sellerRating: 4.5, // default
+    trustScore: 80     // default
+}));
+
+// 🔹 Merge BOTH
+const products = [...demoProducts, ...formattedStoredProducts];
+
+// 🔹 Load reviews from localStorage or fallback demo
+let reviewsDB = JSON.parse(localStorage.getItem('reviewsDB')) || {
+  1: [{ user: "Alice Mainaa", text: "Fast delivery, laptop is perfect!", verified: true, rating: 5 }],
+  2: [{ user: "Dennis Kabugua", text: "Noise cancellation is insane!", verified: true, rating: 5 }],
+  3: [{ user: "Peter Mutua", text: "Samsung Buds are incredible!", verified: true, rating: 5 }],
+  4: [{ user: "Tom Kimani", text: "Accurate fitness tracking, battery lasts 2 days.", verified: true, rating: 4 }],
+  5: [{ user: "James Kyeni", text: "Great gaming mouse, super responsive.", verified: true, rating: 5 }],
+  6: [{ user: "Chris Mulot", text: "Typing feels amazing, build quality is solid.", verified: true, rating: 5 }],
+  7: [{ user: "Diana Wamboi", text: "Great action camera, footage is crystal clear.", verified: true, rating: 5 }],
+  8: [{ user: "Paul Kasongo", text: "Excellent battery life, sound is crisp.", verified: true, rating: 5 }],
+  9: [{ user: "Kevin Tuju", text: "Drone flies smooth, camera quality is amazing.", verified: true, rating: 5 }],
+  10: [{ user: "Emma Nga'nga", text: "Super fast charging, compact size.", verified: true, rating: 5 }]
+};
+
+// Ensure every product has at least one review
+for (let i = 1; i <= 10; i++) {
+  if (!reviewsDB[i] || reviewsDB[i].length === 0) {
+    reviewsDB[i] = [{ user: "Verified Buyer", text: "Great product, trusted seller!", verified: true, rating: 5 }];
+  }
+}
+
+// 🔹 Chat messages
+let chatMessages = {};
+products.forEach(p => { chatMessages[p.id] = [{ sender: "seller", text: `Hi! I'm ${p.seller}. Any questions about ${p.name}?` }] });
+
+let cart = [];
+
+// DOM references
+const gridEl = document.getElementById('grid');
+const cartPanel = document.getElementById('cartPanel');
+const cartCountSpan = document.getElementById('cartCount');
+const cartBody = document.getElementById('cartBody');
+const totalSpan = document.getElementById('total');
+const modalOverlay = document.getElementById('productModal');
+const modalContent = document.getElementById('modalContent');
+
+function getTrustColor(score) {
+  if (score >= 85) return 'var(--trust-high)';
+  if (score >= 70) return 'var(--trust-mid)';
+  return 'var(--trust-low)';
+}
+
+// 🔹 Render Products
+function renderProducts() {
+  let filtered = [...products];
+  const searchTerm = document.getElementById('search').value.toLowerCase();
+  const category = document.getElementById('category').value;
+  const sortBy = document.getElementById('sort').value;
+
+  if (searchTerm) filtered = filtered.filter(p => p.name.toLowerCase().includes(searchTerm) || p.desc.toLowerCase().includes(searchTerm));
+  if (category !== 'all') filtered = filtered.filter(p => p.category === category);
+  if (sortBy === 'low') filtered.sort((a,b) => a.price - b.price);
+  else if (sortBy === 'high') filtered.sort((a,b) => b.price - a.price);
+  else if (sortBy === 'trust') filtered.sort((a,b) => b.trustScore - a.trustScore);
+  else filtered.sort((a,b) => b.id - a.id);
+
+  gridEl.innerHTML = filtered.map(p => `
+    <div class="card" data-id="${p.id}">
+      <div class="card-img" style="background-image: url('${p.img}');">
+        <div class="trust-score-chip" style="background:${getTrustColor(p.trustScore)}; color:black;"> Trust ${p.trustScore}%</div>
+      </div>
+      <div class="card-body">
+        <div class="title">${p.name}</div>
+        <div class="price">KES ${p.price.toLocaleString()}</div>
+        <div class="seller">${p.seller} ★ ${p.sellerRating}</div>
+        <div class="actions">
+          <button class="primary add-cart-btn" data-id="${p.id}">Add to Cart</button>
+          <button class="secondary view-detail" data-id="${p.id}">View & Chat</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+
+  document.querySelectorAll('.add-cart-btn').forEach(btn => {
+    btn.addEventListener('click', (e) => { e.stopPropagation(); addToCart(parseInt(btn.dataset.id)); });
+  });
+  document.querySelectorAll('.view-detail').forEach(btn => {
+    btn.addEventListener('click', (e) => { e.stopPropagation(); openProductModal(parseInt(btn.dataset.id)); });
+  });
+}
+
+// 🔹 Add to cart
+function addToCart(productId) {
+  const product = products.find(p => p.id === productId);
+  if (product) { cart.push(product); updateCartUI(); showToast("✓ Added to cart!"); }
+}
+function removeFromCart(index) { cart.splice(index,1); updateCartUI(); }
+function updateCartUI() {
+  cartCountSpan.innerText = cart.length;
+  if (!cartBody) return;
+  if (cart.length === 0) { cartBody.innerHTML = '<div style="text-align:center; padding:20px;">Cart is empty</div>'; totalSpan.innerText = "Total: KES 0"; return; }
+  let total = 0;
+  cartBody.innerHTML = cart.map((item, idx) => { total += item.price; return `<div class="cart-item"><span><strong>${item.name}</strong><br><span style="font-size:0.75rem;">KES ${item.price.toLocaleString()}</span></span><button class="remove-item" data-idx="${idx}" style="background:#ef4444;">Remove</button></div>`; }).join('');
+  totalSpan.innerText = `Total: KES ${total.toLocaleString()}`;
+  document.querySelectorAll('.remove-item').forEach(btn => { btn.addEventListener('click', (e) => { removeFromCart(parseInt(btn.dataset.idx)); }); });
+}
+
+// 🔹 Toast
+function showToast(msg) { 
+  let t = document.createElement('div'); 
+  t.innerText = msg; 
+  t.style.position='fixed'; 
+  t.style.bottom='80px'; 
+  t.style.right='24px'; 
+  t.style.background='var(--accent)'; 
+  t.style.color='#000'; 
+  t.style.padding='10px 18px'; 
+  t.style.borderRadius='40px'; 
+  t.style.zIndex='999'; 
+  t.style.fontWeight='bold'; 
+  document.body.appendChild(t); 
+  setTimeout(()=>t.remove(),1800); 
+}
+
+// 🔹 Product Modal
+function openProductModal(productId) {
+  const product = products.find(p => p.id === productId);
+  if (!product) return;
+  const reviews = reviewsDB[productId] || [];
+  const trustScore = product.trustScore;
+  const trustColor = getTrustColor(trustScore);
+
+  modalContent.innerHTML = `
+    <div class="product-detail-grid">
+      <div class="detail-img" style="background-image: url('${product.img}');"></div>
+      <div>
+        <h2>${product.name}</h2>
+        <div class="price">KES ${product.price.toLocaleString()}</div>
+        <div> Seller: ${product.seller} ★ ${product.sellerRating}</div>
+        <div class="trust-score-big" style="background:${trustColor}; color:#000;"> Trust Score: ${trustScore}%</div>
+        <p>${product.desc}</p>
+        <button class="primary" id="modalAddToCart">+ Add to Cart</button>
+      </div>
+    </div>
+    <div class="reviews-section">
+      <h3> Verified Buyer Reviews </h3>
+      ${reviews.map(r => `<div class="review-item"><strong>${r.user}</strong> (${r.rating}★) ${r.verified ? '✓ Verified' : 'Pending'}<p>${r.text}</p></div>`).join('')}
+    </div>
+    <div class="leave-review-section">
+      <h3>Leave a Review</h3>
+      <textarea id="reviewText" placeholder="Write your review here..." rows="3"></textarea>
+      <select id="reviewRating">
+        <option value="5">★★★★★ 5</option>
+        <option value="4">★★★★ 4</option>
+        <option value="3">★★★ 3</option>
+        <option value="2">★★ 2</option>
+        <option value="1">★ 1</option>
+      </select>
+      <button class="primary" id="submitReviewBtn">Submit Review</button>
+    </div>
+    <div class="chat-section">
+      <h3> Chat with Seller </h3>
+      <div class="chat-messages" id="chatMessagesBox"></div>
+      <div class="chat-input-area">
+        <input type="text" id="chatInputMsg" placeholder="Ask about product..." />
+        <button id="sendChatBtn" class="primary">Send</button>
+      </div>
+      <p style="font-size:0.7rem;"> Admin oversight ensures safety </p>
+    </div>
+  `;
+
+  // Render chat
+  const chatBox = document.getElementById('chatMessagesBox');
+  function renderChat() {
+    const msgs = chatMessages[product.id] || [];
+    chatBox.innerHTML = msgs.map(m => `<div class="message ${m.sender === 'buyer' ? 'buyer' : 'seller'}"><strong>${m.sender === 'buyer' ? 'You' : product.seller}:</strong> ${m.text}</div>`).join('');
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+  renderChat();
+
+  const sendBtn = document.getElementById('sendChatBtn');
+  const chatInput = document.getElementById('chatInputMsg');
+  const newSend = () => {
+    const msg = chatInput.value.trim();
+    if (msg) {
+      if (!chatMessages[product.id]) chatMessages[product.id] = [];
+      chatMessages[product.id].push({ sender: "buyer", text: msg });
+      renderChat();
+      chatInput.value = '';
+      setTimeout(() => {
+        const autoResponses = [`Thanks for your interest!`, `We offer 1-year warranty.`, `Free delivery above KES 15000.`];
+        const randomReply = autoResponses[Math.floor(Math.random() * autoResponses.length)];
+        chatMessages[product.id].push({ sender: "seller", text: randomReply });
+        renderChat();
+      }, 1000);
+    }
+  };
+  sendBtn.addEventListener('click', newSend);
+  chatInput.addEventListener('keypress', (e) => { if(e.key === 'Enter') newSend(); });
+
+  // Add to cart from modal
+  document.getElementById('modalAddToCart')?.addEventListener('click', () => { addToCart(product.id); showToast(`Added ${product.name} to cart`); });
+
+  // Submit review
+  document.getElementById('submitReviewBtn').addEventListener('click', () => {
+    const text = document.getElementById('reviewText').value.trim();
+    const rating = parseInt(document.getElementById('reviewRating').value);
+    const activeUser = JSON.parse(localStorage.getItem('activeUser')) || { email: "Anonymous Buyer" };
+    if (!text) return alert("Please write a review.");
+    if (!reviewsDB[product.id]) reviewsDB[product.id] = [];
+    reviewsDB[product.id].push({ user: activeUser.email, text, verified: false, rating });
+    localStorage.setItem('reviewsDB', JSON.stringify(reviewsDB));
+    alert("Thank you! Your review will appear after admin approval.");
+    openProductModal(product.id); // refresh modal
+  });
+
+  modalOverlay.classList.add('active');
+}
+
+// 🔹 Populate categories
+function populateCategories() {
+  const cats = [...new Set(products.map(p => p.category))];
+  const catSelect = document.getElementById('category');
+  catSelect.innerHTML = '<option value="all">All Categories</option>' + cats.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+// 🔹 Events
+document.getElementById('search').addEventListener('input', renderProducts);
+document.getElementById('category').addEventListener('change', renderProducts);
+document.getElementById('sort').addEventListener('change', renderProducts);
+document.getElementById('cartBtn').addEventListener('click', () => cartPanel.classList.add('open'));
+document.getElementById('closeCartBtn').addEventListener('click', () => cartPanel.classList.remove('open'));
+document.getElementById('modalClose').addEventListener('click', () => modalOverlay.classList.remove('active'));
+modalOverlay.addEventListener('click', (e) => { if(e.target === modalOverlay) modalOverlay.classList.remove('active'); });
+document.getElementById('checkoutBtn').addEventListener('click', () => {
+  if(cart.length){
+      localStorage.setItem('checkoutCart', JSON.stringify(cart));
+      window.location.href = "checkout.html";
+  } else alert("Your cart is empty!");
+});
+
+// 🔹 Init
+populateCategories();
+renderProducts();
+updateCartUI();
+</script>
+</body>
+</html>
