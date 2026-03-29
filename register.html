@@ -1,0 +1,45 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"> 
+  <title>Safe Markets - Register</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="app.css">
+</head>
+<body>
+
+<div class="register-container">
+  <div class="register-card swipe-in">
+    <h2>Create Account</h2>
+    
+    <input type="email" id="regEmail" placeholder="Email">
+    <input type="password" id="regPassword" placeholder="Password">
+    <input type="password" id="confirmPassword" placeholder="Confirm Password">
+    
+    <div class="role-select">
+      <p>Sign up as:</p>
+      <label class="role-option">
+        <input type="radio" name="role" value="buyer" checked> Buyer
+      </label>
+      <label class="role-option">
+        <input type="radio" name="role" value="seller"> Seller
+      </label>
+    </div>
+    
+    <label class="terms">
+      <input type="checkbox" id="termsCheck"> I agree to Terms & Conditions
+    </label>
+    
+    <button id="registerBtn">Register</button>
+    
+    <p class="switch-text">
+      Already have an account? 
+      <a href="login.html">Login here</a>
+    </p>
+  </div>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
