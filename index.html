@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -26,7 +27,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 1px 8%;
+    padding: 20px 8%;
     background-color: #0B3C5D;
     color: white;
 }
@@ -57,35 +58,27 @@ body {
     border-radius: 5px;
     color: #1d72b8;
 }
+
+/* HERO */
 .hero {
-  padding: 60px 24px;
-  text-align: center;
+    padding: 100px 8%;
+    text-align: center;
+    background-color: white;
 }
-
 .hero h1 {
-  font-size: clamp(25px, 8vw, 64px);
-  font-weight: 800;
-  color: #e0e0f0;        
-  margin-bottom: 15px;
-}
-
-.hero h1 span {
-  color: #00ff9d;        
+    font-size: 36px;
+    margin-bottom: 20px;
+    color: #0B3C5D;
 }
 .hero p {
-    font-size: 20px;
+    font-size: 18px;
     margin-bottom: 30px;
 }
 .hero-buttons {
     display: flex;
     justify-content: center;
-    gap: 20px;
+    gap: 15px;
 }
-
-
-/* HERO */
-
-
 
 /* FEATURES */
 .features {
@@ -160,15 +153,16 @@ footer {
 
 <!-- NAVBAR -->
 <nav class="navbar">
-    <div class="hero">
-  <h1>Safe-<span>Markets</span></h1>
+    <div class="logo">
+        <img src="images/logo.png" alt="Safe-Markets Logo">
     </div>
     <ul class="nav-links">
-        <li><a href="#">Home</a></li>
-        <li><a href="register.html" onclick="showPage('registrationPage')">Browse</a></li>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="product.html">Browse</a></li>
         <li><a href="#how-it-works">How It Works</a></li>
-        <li><a href="reviews.html" onclick="showPage('reviewsPage')">Search a Business</a></li>
-        <li><a href="register.html" class="btn-primary"onclick="showPage('registrationPage')">Register</a></li>
+        <li><a href="Authentication.html">Login</a></li>
+        <li><a href="marketplace.html">Sell</a></li>
+        <li><a href="Authentication.html" class="btn-primary">Register</a></li>
     </ul>
 </nav>
 
@@ -177,8 +171,8 @@ footer {
     <h1>Secure E-Commerce Powered by Digital Trust</h1> 
     <p>Buy and sell with confidence through verified transactions, trust scores, and fraud monitoring.</p> 
     <div class="hero-buttons"> 
-        <a href="register.html" class="btn-primary">Get Started</a> 
-        <a href="register.html" class="btn-secondary">Browse Marketplace</a> 
+        <a href="Authentication.html" class="btn-primary">Get Started</a> 
+        <a href="marketplace.html" class="btn-secondary">Browse Marketplace</a> 
     </div>
 </section>
 
@@ -231,7 +225,7 @@ footer {
 <!-- CTA -->
 <section class="cta">
     <h2>Start Trading with Confidence Today</h2>
-    <a href="register.html" class="btn-primary">Register Now</a>
+    <a href="Authentication.html" class="btn-primary">Register Now</a>
 </section>
 
 <!-- FOOTER -->
